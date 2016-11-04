@@ -32,7 +32,7 @@ bot.on("message", msg => {
         let cmd = args.shift().replace(conf.command_prefix, "");
 
         if (commands[cmd]) {
-            commands[cmd](msg.channel, args);
+            commands[cmd](args, msg.channel, msg.author);
         } else {
             msg.channel.sendMessage("That command isn't yet implemented :(");
         }

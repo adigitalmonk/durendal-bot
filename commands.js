@@ -1,8 +1,8 @@
 module.exports = {
-    'Syn' : function(channel, params) {
+    'Syn' : function(params, channel) {
         channel.sendMessage("Ack!");
     },
-    'call' : function(channel, params) {
+    'call' : function(params, channel) {
         channel.sendMessage(params[0]);
     }
 };
