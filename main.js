@@ -9,20 +9,28 @@ bot.on('ready', () => {
   console.log('I am ready!');
 });
 
-console.log("Starting events");
 bot.on("message", msg => {
     if (
         conf.allowed_channels 
-        && conf.allowed_channels.indexOf(msg.channel.name) < 0
+        && conf.allowed_channels.indexOf(msg.channel.name) < 0 
     ) {
         // Only allow messages from the allowed channels
         return;
     }
-    
+
+    // Don't response to bot messages
+    if(msg.author.bot) return;
+
     if (msg.content.startsWith("Syn!")) {
         msg.channel.sendMessage("Syn-Ack!");
     }
 });
+
+bot.on("guildMemberAdd", (guild, member) => {
+    console.log(`New User "${member.user.username}" has joined "${guild.name}"` );
+    guild.defaultChannel.sendMessage(`"${member.user.username}" has joined this server`);
+});
+
 
 
 console.log("Logging In");
