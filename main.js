@@ -11,6 +11,14 @@ bot.on('ready', () => {
 
 console.log("Starting events");
 bot.on("message", msg => {
+    if (
+        conf.allowed_channels 
+        && conf.allowed_channels.indexOf(msg.channel.name) < 0
+    ) {
+        // Only allow messages from the allowed channels
+        return;
+    }
+    
     if (msg.content.startsWith("Syn!")) {
         msg.channel.sendMessage("Syn-Ack!");
     }
@@ -18,7 +26,4 @@ bot.on("message", msg => {
 
 
 console.log("Logging In");
-
-// Why does this fail?
-
 var access = bot.login(conf.secret_key);
