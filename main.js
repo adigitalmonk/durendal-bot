@@ -5,6 +5,9 @@ const bot = new Discord.Client();
 const conf = require('./config');
 console.log(conf);
 
+// Load the commands
+const commands = require('./commands');
+
 bot.on('ready', () => {
   console.log('I am ready!');
 });
@@ -21,8 +24,18 @@ bot.on("message", msg => {
     // Don't response to bot messages
     if(msg.author.bot) return;
 
-    if (msg.content.startsWith("Syn!")) {
-        msg.channel.sendMessage("Syn-Ack!");
+    if (
+        conf.command_prefix // The command prefix is set
+        && msg.content.startsWith(conf.command_prefix) // The msg starts with the commands prefix
+    ) {
+        let args = msg.content.split(" ");
+        let cmd = args.shift().replace(conf.command_prefix, "");
+
+        if (commands[cmd]) {
+            commands[cmd](msg.channel, args);
+        } else {
+            msg.channel.sendMessage("That command isn't yet implemented :(");
+        }
     }
 });
 
@@ -30,8 +43,6 @@ bot.on("guildMemberAdd", (guild, member) => {
     console.log(`New User "${member.user.username}" has joined "${guild.name}"` );
     guild.defaultChannel.sendMessage(`"${member.user.username}" has joined this server`);
 });
-
-
 
 console.log("Logging In");
 var access = bot.login(conf.secret_key);
