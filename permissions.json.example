@@ -1,0 +1,15 @@
+{
+    "global":{
+        "command": false,
+        "command2": false
+    },
+    "users":{
+        "userid": {
+            "command" : true,
+            "command2" : true
+            },
+        "anotheruserid": {
+            "command2" : true
+        }
+    }
+}
