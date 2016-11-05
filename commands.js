@@ -1,4 +1,7 @@
 module.exports = {
+    'kill' : function() {
+        process.exit(10);
+    },
     'Syn' : function(params, channel) {
         channel.sendMessage("Ack!");
     },
