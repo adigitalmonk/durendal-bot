@@ -1,8 +1,0 @@
-{
-    "secret_key" : "MjQzODEyNzYwOTgxMzQwMTcw.CwFamw.EccST3tbF_BN3NjajqhRIvOWIuY",
-    "allowed_channels" : [
-        "do-it-in-prod"
-    ],
-    "command_prefix" : "#",
-    "permissions_file" : "auth.json"
-}

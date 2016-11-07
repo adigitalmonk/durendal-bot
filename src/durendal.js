@@ -7,6 +7,7 @@ var conf = require('../conf/config.json');
 console.log(conf);
 // Load the commands
 const commands = require('../src/commands');
+const permissions = require('./src/permissions');
 
 class Durendal {
     constructor() {

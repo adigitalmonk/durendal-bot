@@ -1,2 +1,7 @@
 node_modules/*
+conf/config.json
+conf/auth.json
+
+# Legacy
 config.js
+auth.json

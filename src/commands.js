@@ -1,3 +1,7 @@
+// Had trouble with the bootstrap object when trying this
+// didn't investigate, but declaring inline worked
+const permissions = require('./src/permissions');
+
 module.exports = {
     'Syn' : function(params, channel) {
         channel.sendMessage("Ack!");
