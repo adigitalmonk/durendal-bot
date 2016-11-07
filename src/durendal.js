@@ -4,10 +4,12 @@ const Discord = require("discord.js");
 // so I won't bother to check here
 var conf = require('../conf/config.json');
 
-console.log(conf);
+// Let's not do this everytime
+// console.log(conf);
+
 // Load the commands
-const commands = require('../src/commands');
-const permissions = require('./src/permissions');
+const commands = require('./commands');
+const permissions = require('./permissions');
 
 class Durendal {
     constructor() {
@@ -29,7 +31,6 @@ class Durendal {
     }
 
     boot() {
-        this.reloadConfig();
         this.bot = new Discord.Client();
         this.startListeners();
         this.bot.login(conf.secret_key);

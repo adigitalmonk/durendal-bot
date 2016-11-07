@@ -1,8 +1,9 @@
-const conf = require('./config');
+const conf = require('../conf/config.json');
 const fs = require('fs');
 const EventEmitter = require('events').EventEmitter;
+const path = require('path');
 
-const permissions_file = conf.permissions_file;
+const permissions_file = '../' + path.join('conf/', conf.permissions_file);
 
 // We could probably do this without
 // using the EventEmitter parent
@@ -93,7 +94,12 @@ class Permissions extends EventEmitter {
     }
 
     load() {
-        let data = require('./auth.json');
+        // This will fail if there is no permissions file
+        // We need at least the file name to be in the config
+        // and the file needs to exist and at least contain {}
+        // The system will take care of the rest
+        // TODO: Improve this fail case
+        let data = require(permissions_file);
         this.roles = data.roles || [];
         this.commands = data.commands || [];
         this.users = data.commnds || [];

@@ -1,6 +1,6 @@
 // Had trouble with the bootstrap object when trying this
 // didn't investigate, but declaring inline worked
-const permissions = require('./src/permissions');
+const permissions = require('./permissions');
 
 module.exports = {
     'Syn' : function(params, channel) {
@@ -10,11 +10,9 @@ module.exports = {
         channel.sendMessage(params[0]);
     },
     'restart' : function() {
-        let bootstrap = require('./bootstrap');
-        bootstrap.emit('restart');
+        require('./bootstrap').emit('restart');
     },
     'shutdown' : function() {
-        let bootstrap = require('./bootstrap');
-        bootstrap.emit('stop');
+        require('./bootstrap').emit('stop');
     }
 };

@@ -1,5 +1,6 @@
 {
     "secret_key" : "YOUR SECRET KEY GOES HERE",
     "allowed_channels" : [],
-    "command_prefix" : "!!"
+    "command_prefix" : "!!",
+    "permissions_file" : "auth.json"
 }

@@ -13,6 +13,7 @@ class Bootstrap extends EventEmitter {
         this.on('restart', () => {
             console.log("Restarting");
             this.bot.shutDown();
+            this.bot.reloadConfig();
             this.bot.boot();
         });
         
