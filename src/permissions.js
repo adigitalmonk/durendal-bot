@@ -15,25 +15,35 @@ class Permissions extends EventEmitter {
     }
     
     addRole(role) {
-        if (!this.roles[role]) {
+        // We only add the role if it was never created before
+        if (!this.roles.role) {
             this.roles[role] = [];
         }
-        delete this.users[user]; // invalidate their roles 'cache'
 
-        // Let the object know that we updated something
-        this.emit('updated');
+        // Why save if we didn't add anyone to the role?
         return true;
     }
     
     addUser(role, user) {
-        if (!this.roles[role]) {
+        if (!this.roles.role) {
             // Throw exception instead?
             this.addRole(role);
         }
-       
-        this.roles[role].push(user);
 
+        this.roles[role].push(user);
+        console.log(this.roles[role]);
+        delete this.users[user]; // invalidate their roles 'cache'
+
+        // Let the object know that we updated something
         this.emit('updated');
+    }
+
+    roleHasUser(role, user) {
+        if (!this.roles.role) {
+            return false;
+        }
+        
+        // if (!this.roles.)
     }
 
     getRoles(user) {
@@ -45,11 +55,12 @@ class Permissions extends EventEmitter {
         
         // Build the list of roles for the user
         let roles = [];
-        this.roles.forEach(function(role) {
-            if (role.indexOf(user) != -1) {
+        
+        Object.keys(this.roles).forEach(function(role) {
+            if (this.roles[role].indexOf(user) > -1) {
                 roles.push(role);
             }
-        });
+        }.bind(this));
 
         // Cache it.
         this.users[user] = roles;
@@ -67,9 +78,10 @@ class Permissions extends EventEmitter {
 
         this.writeLock = false;
 
-        this.roles = [];
-        this.commands = [];
-        this.users = [];
+        this.roles = {};
+        this.commands = {};
+        this.users = {};
+
         this.task_queue = [];
 
         this.prepareListeners();
@@ -100,9 +112,9 @@ class Permissions extends EventEmitter {
         // The system will take care of the rest
         // TODO: Improve this fail case
         let data = require(permissions_file);
-        this.roles = data.roles || [];
-        this.commands = data.commands || [];
-        this.users = data.commnds || [];
+        this.roles = data.roles || {};
+        this.commands = data.commands || {};
+
         this.emit('loaded');
     }
 
