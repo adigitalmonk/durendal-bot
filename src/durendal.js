@@ -10,6 +10,7 @@ var conf = require('../conf/config.json');
 // Load the commands
 const commands = require('./commands');
 const permissions = require('./permissions');
+const auditor = require('./auditor');
 
 class Durendal {
     constructor() {
@@ -65,11 +66,15 @@ class Durendal {
             ) {
                 let args = msg.content.split(" ");
                 let cmd = args.shift().replace(conf.command_prefix, "");
-
-                if (commands[cmd]) {
-                    commands[cmd](args, msg.channel, msg.author);
+                if (auditor.observe(cmd, msg.author.id)) {
+                    if (commands[cmd]) {
+                        commands[cmd](args, msg.channel, msg.author);
+                    } else {
+                        msg.channel.sendMessage("That command isn't yet implemented :(");
+                    }
                 } else {
-                    msg.channel.sendMessage("That command isn't yet implemented :(");
+                    // Do we want to actually say something when they are throttled, or just not respond?
+                    // msg.channel.sendMessage('Sorry, ${msg.author.username} ... I can\'t do that for you.');
                 }
             }
         });
