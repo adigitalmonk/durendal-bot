@@ -7,8 +7,6 @@ var conf = require('../conf/config.json');
 // Let's not do this everytime
 // console.log(conf);
 
-// Load the commands
-const commands = require('./commands');
 const permissions = require('./permissions');
 const auditor = require('./auditor');
 
