@@ -50,8 +50,8 @@ class Durendal {
 
         this.bot.on("message", msg => {
             if (
-                conf.allowed_channels 
-                && conf.allowed_channels.indexOf(msg.channel.name) < 0 
+                conf.allowed_channels
+                && conf.allowed_channels.indexOf(msg.channel.name) < 0
             ) {
                 // Only allow messages from the allowed channels
                 return;
@@ -65,16 +65,24 @@ class Durendal {
                 && msg.content.startsWith(conf.command_prefix) // The msg starts with the commands prefix
             ) {
                 let args = msg.content.split(" ");
-                let cmd = args.shift().replace(conf.command_prefix, "");
-                if (auditor.observe(cmd, msg.author.id)) {
-                    if (commands[cmd]) {
-                        commands[cmd](args, msg.channel, msg.author);
-                    } else {
-                        msg.channel.sendMessage("That command isn't yet implemented :(");
-                    }
-                } else {
-                    // Do we want to actually say something when they are throttled, or just not respond?
-                    // msg.channel.sendMessage('Sorry, ${msg.author.username} ... I can\'t do that for you.');
+                let cmd_name = args.shift().replace(conf.command_prefix, "").toLowerCase();
+
+                try {
+                    // TODO: Check if 'cmd_name' file exists before
+
+                    // TODO: Make this safer
+                    let cmd = new (require('./commands/' + cmd_name))(msg);
+
+                    // This returns a boolean
+                    // But we don't do anything with it yet
+                    cmd.execute();
+
+                } catch (e) {
+                    console.log(e);
+
+                    // Audit that they tried a bad command?
+                    auditor.observe(msg.author, cmd_name);
+
                 }
             }
         });

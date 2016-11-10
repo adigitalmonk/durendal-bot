@@ -3,7 +3,8 @@ const fs = require('fs');
 const EventEmitter = require('events').EventEmitter;
 const path = require('path');
 
-const permissions_file = '../' + path.join('conf/', conf.permissions_file);
+// TODO: Support running on Windows?
+const permissions_file = '../' + path.join('conf', conf.permissions_file);
 
 // We could probably do this without
 // using the EventEmitter parent
@@ -13,7 +14,7 @@ class Permissions extends EventEmitter {
     getRoles() {
         return this.roles;
     }
-    
+
     addRole(role) {
         // We only add the role if it was never created before
         if (!this.roles.role) {
@@ -23,7 +24,7 @@ class Permissions extends EventEmitter {
         // Why save if we didn't add anyone to the role?
         return true;
     }
-    
+
     addUser(role, user) {
         if (!this.roles.role) {
             // Throw exception instead?
@@ -42,7 +43,7 @@ class Permissions extends EventEmitter {
         if (!this.roles.role) {
             return false;
         }
-        
+
         // if (!this.roles.)
     }
 
@@ -52,10 +53,10 @@ class Permissions extends EventEmitter {
         if (this.users[user]) {
             return this.users[user];
         }
-        
+
         // Build the list of roles for the user
         let roles = [];
-        
+
         Object.keys(this.roles).forEach(function(role) {
             if (this.roles[role].indexOf(user) > -1) {
                 roles.push(role);
@@ -92,7 +93,7 @@ class Permissions extends EventEmitter {
         this.on('updated', () => {
             // TODO: We shouldn't console.log like this
             console.log("Change to permissions... Saving.");
-            this.save(); 
+            this.save();
         });
 
         this.on('loaded', () => {
@@ -128,8 +129,8 @@ class Permissions extends EventEmitter {
 
         // Set the mutex so we can't try to save multiple times
         this.writeLock = true;
-        
-        // I won't save 'users' because 
+
+        // I won't save 'users' because
         // I'll treat this.users as a cache
         let data = {
             'roles' : this.roles,

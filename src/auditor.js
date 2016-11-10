@@ -24,7 +24,7 @@ class Auditor {
 
         if (!this.data[timestamp][user][command]) {
             this.data[timestamp][user][command] = 1;
-            return true;             
+            return true;
         }
 
         if (this.data[timestamp][user][command] >= threshold) {
@@ -42,4 +42,4 @@ class Auditor {
     }
 }
 
-module.exports = new Auditor;
+module.exports = new Auditor();
