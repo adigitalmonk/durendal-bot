@@ -14,7 +14,7 @@ In the root of the project, do this:
 ```
 This will the required node modules.
 
-### Config
+### Configure It!
 Set up your `config.json` file
 
 ```
@@ -28,6 +28,15 @@ The config file has multiple settings, including but not limited to:
 
 You'll need to get the Bot's secret key from the Application/Bot's page on
 [the Discord Developer portal](http://discordapp.com/developers/applications/me/) 
+
+There is a also a handy entry point to build an initial configuration file.
+```
+> node setup
+```
+This will do the following:
+- Create a config file if one does not exist
+- Fail with an error if the config exists, but is malformed (bad JSON!)
+- Only add settings to the config if they are missing
 
 ### Join bot to a server
 You'll probably want to join your bot to a server, as it isn't very useful if it's not connected anywhere.
