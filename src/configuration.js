@@ -1,5 +1,5 @@
 const path = require('path');
-const config_root = path.join(process.cwd(), 'conf');
+const config_root = path.join(__dirname, 'conf');
 const config_file = path.join(config_root, 'config.json');
 const fs = require('fs');
 
@@ -112,7 +112,7 @@ class Configuration {
             obj[key] = val;
         }
         fs.writeFileSync(
-            config_file, 
+            config_file,
             JSON.stringify(obj)
         );
 
