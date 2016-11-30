@@ -1,14 +1,11 @@
 const Discord = require("discord.js");
+const fs = require('fs');
+const join = require('path').join;
 
-// We check if this exists in the main function,
-// so I won't bother to check here
-var conf = require('../conf/config.json');
-
-// Let's not do this everytime
-// console.log(conf);
-
-const permissions = require('./permissions');
-const auditor = require('./auditor');
+// We pre-load this in the main function, 
+// so we just need to get it here
+const config = require("./configuration.js");
+const auditor = require('./auditor.js');
 
 class Durendal {
     constructor() {
@@ -20,19 +17,56 @@ class Durendal {
     }
 
     reloadConfig() {
-        if (require.cache[require.resolve('../conf/config.json')]) {
-            delete require.cache[require.resolve('../conf/config.json')]
-            console.log("Invalidating config cache");
-        } else {
-            console.log("Config not loaded");
-        }
-        conf = require('../conf/config.json');
+        config.reload();
+    }
+
+    // Get all of the listeners we have set up
+    // for the bot
+    getListeners() {
+        // Get all of the files in our listeners directory
+        let listenerFiles = fs.readdirSync(join(__dirname, 'listeners'));
+        console.log('Found ' + listenerFiles.length + ' listener configs!\nLoading now...\n');
+
+        // Iterate over the list of files
+        let listeners = listenerFiles.reduce((events, file) => {
+
+            // For each file, load the file
+            let listeners = require(join(__dirname, 'listeners', file));
+            
+            // Take all of the listeners configured in the file
+            listeners.map(listener => {
+                // If we haven't created an array for this already
+                // Create the array
+                events[listener.event] = events[listener.event] || [];
+                // Push the function into the array
+                events[listener.event].push(listener.response);
+            });
+
+            return events;
+        }, {});
+
+        return listeners;
     }
 
     boot() {
-        this.bot = new Discord.Client();
-        this.startListeners();
-        this.bot.login(conf.secret_key);
+        let bot = new Discord.Client();
+        let listeners = this.getListeners();
+        
+        for (let listener in listeners) {
+            listeners[listener].map(func => {
+                bot.on(listener, func)
+            });
+        }
+
+        let secret_key = config.getSetting('secret_key');
+        try { 
+            bot.login(secret_key);
+        } catch (e) {
+            console.log("Couldn't log in: " + e.message);
+            process.exit();
+        }
+
+        this.bot = bot;
         return this.active = true;
     }
 
@@ -41,55 +75,6 @@ class Durendal {
         return this.bot.destroy();
     }
 
-    startListeners() {
-        this.bot.on('ready', () => {
-            console.log('I am ready!');
-        });
-
-        this.bot.on("message", msg => {
-            if (
-                conf.allowed_channels
-                && conf.allowed_channels.indexOf(msg.channel.name) < 0
-            ) {
-                // Only allow messages from the allowed channels
-                return;
-            }
-
-            // Don't response to bot messages
-            if(msg.author.bot) return;
-
-            if (
-                conf.command_prefix // The command prefix is set
-                && msg.content.startsWith(conf.command_prefix) // The msg starts with the commands prefix
-            ) {
-                let args = msg.content.split(" ");
-                let cmd_name = args.shift().replace(conf.command_prefix, "").toLowerCase();
-
-                try {
-                    // TODO: Check if 'cmd_name' file exists before
-
-                    // TODO: Make this safer
-                    let cmd = new (require('./commands/' + cmd_name))(msg);
-
-                    // This returns a boolean
-                    // But we don't do anything with it yet
-                    cmd.execute();
-
-                } catch (e) {
-                    console.log(e);
-
-                    // Audit that they tried a bad command?
-                    auditor.observe(msg.author, cmd_name);
-
-                }
-            }
-        });
-
-        this.bot.on("guildMemberAdd", (guild, member) => {
-            console.log(`New User "${member.user.username}" has joined "${guild.name}"` );
-            guild.defaultChannel.sendMessage(`"${member.user.username}" has joined this server`);
-        });
-    }
 }
 
 
