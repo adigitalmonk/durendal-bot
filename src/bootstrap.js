@@ -1,5 +1,7 @@
 const Durendal = require('./durendal');
 const EventEmitter = require('events').EventEmitter;
+const Logger = require('./logger');
+
 
 class Bootstrap extends EventEmitter {
 
@@ -11,19 +13,19 @@ class Bootstrap extends EventEmitter {
 
     startListeners() {
         this.on('restart', () => {
-            console.log("Restarting");
+            Logger.log("Restarting");
             this.bot.shutDown();
             this.bot.reloadConfig();
             this.bot.boot();
         });
 
         this.on('start', () => {
-            console.log("Booting up!");
+            Logger.log("Booting up!");
             this.bot.boot();
         });
 
         this.on('stop', () => {
-            console.log("Shutting down!");
+            Logger.log("Shutting down!");
             this.bot.shutDown();
         });
     }
