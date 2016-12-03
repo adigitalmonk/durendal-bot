@@ -1,4 +1,6 @@
 const Discord = require("discord.js");
+const Interface = require('./interface.js');
+const Logger = require('./logger.js');
 const fs = require('fs');
 const join = require('path').join;
 
@@ -25,7 +27,7 @@ class Durendal {
     getListeners() {
         // Get all of the files in our listeners directory
         let listenerFiles = fs.readdirSync(join(__dirname, 'listeners'));
-        console.log('Found ' + listenerFiles.length + ' listener configs!\nLoading now...\n');
+        Logger.log('Found ' + listenerFiles.length + ' listener configs! Loading now...\n');
 
         // Iterate over the list of files
         let listeners = listenerFiles.reduce((events, file) => {
@@ -49,6 +51,7 @@ class Durendal {
     }
 
     boot() {
+
         let bot = new Discord.Client();
         let listeners = this.getListeners();
         
@@ -59,12 +62,18 @@ class Durendal {
         }
 
         let secret_key = config.getSetting('secret_key');
-        try { 
-            bot.login(secret_key);
-        } catch (e) {
-            console.log("Couldn't log in: " + e.message);
-            process.exit();
-        }
+        bot.login(secret_key)
+            .then(
+                (() => {
+                    Interface.start();
+                    this.active = true;
+                }).bind(this)
+            ).catch(
+                () => {
+                    Logger.error("Failed to log in! Double check your secret token");
+                    process.exit();
+                }
+            );
 
         this.bot = bot;
         return this.active = true;
