@@ -1,4 +1,5 @@
-const auditor = require('./auditor');
+const auditor = require('./auditor.js');
+const permissions = require('./permissions.js');
 
 class Command {
     constructor(msg) {
@@ -16,7 +17,12 @@ class Command {
         // create data members
         this.author = msg.author;
         this.channel = msg.channel;
+        this.commandName = this.constructor.name;
+        // Depending on the message you might not get a GuildMember object
+        this.authorRoles =  msg.member ? msg.member.roles : undefined;
         this.args = this.prepareArgs(msg);
+        // Depending on the message you might not get a Guild object
+        this.guildUsedIn = msg.guild;
 
         // By default we will assume that commands are not restricted.
         // Implementers of this class can override this to flag the command
@@ -39,30 +45,22 @@ class Command {
     audit() {
 
         // Check permissions?
-        let permissions = this.checkPermissions();
+        let allowed = this.checkPermissions();
 
         // Check audit?
-        let audit = auditor.observe(this.author, this.constructor.name);
+        let audit = auditor.observe(this.author, this.commandName);
 
-        return audit && permissions;
+        return audit && allowed;
     }
 
     // Override this in child class?
     checkPermissions() {
-
-        if (this.restricted) {
-
-            // ??
-            let allowed_users = this.getAllowedRoles();
+        if (!this.restricted){
+            // If we aren't restricted it is allowed
+            return true;
         }
-
-        // TODO: Make this great again
-        return !this.restricted;
-    }
-
-    getAllowedRoles() {
-        // Load allowed roles based on this.constructor.name ?
-        return [];
+        // Since we are restricted, we need to check if the issuer has permission to run the command
+        return permissions.isAllowedToRun(this.commandName, this.authorRoles, this.guildUsedIn);
     }
 
     report() {
@@ -82,6 +80,12 @@ class Command {
     logic() {
         throw new Error('Functionality not implemented');
     }
+
+    // Children should override this to provide a string of proper command usage
+    usage() {
+        return this.commandName + ' does not have a usage message. Best of luck guessing the proper usage!';
+    }
+
 }
 
 module.exports = Command;

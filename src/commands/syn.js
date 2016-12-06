@@ -1,4 +1,6 @@
-const Command = require('../command');
+const join = require('path').join;
+const Command = require(join('..','command.js'));
+const Logger = require(join('..','logger.js'));
 
 class Syn extends Command {
     constructor(msg) {
@@ -6,7 +8,7 @@ class Syn extends Command {
     }
 
     logic() {
-        this.channel.sendMessage("Ack!");
+        Logger.send(this.channel, "Ack!");
     }
 }
 

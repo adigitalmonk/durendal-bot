@@ -1,6 +1,7 @@
-const config = require('../configuration.js');
 const join = require('path').join;
-const auditor = require('../auditor.js');
+const config = require(join('..','configuration.js'));
+const auditor = require(join('..','auditor.js'));
+const Logger = require(join('..','logger.js'));
 
 module.exports = [
     {
@@ -10,6 +11,7 @@ module.exports = [
             if (
                 allowed_channels
                 && allowed_channels.indexOf(msg.channel.name) < 0
+                && (msg.channel.type != 'dm' && msg.channel.type != 'group')
             ) {
                 // Only allow messages from the allowed channels
                 return;
@@ -40,7 +42,7 @@ module.exports = [
                     instance.execute();
 
                 } catch (e) {
-                    console.log(e);
+                    Logger.error(e);
 
                     // Audit that they tried a bad command?
                     auditor.observe(msg.author, cmd_name);

@@ -1,27 +1,27 @@
-const Durendal = require('./durendal');
+const Durendal = require('./durendal.js');
 const EventEmitter = require('events').EventEmitter;
+const Logger = require('./logger.js');
 const Interface = require('./interface.js');
-const Logger = require('./logger');
 
 class Bootstrap extends EventEmitter {
 
     constructor() {
         super();
-        this.bot = new Durendal();
+        this.durendal = new Durendal();
         this.startListeners();
     }
 
     startListeners() {
         this.on('restart', () => {
             Logger.log("Restarting");
-            this.bot.shutDown();
-            this.bot.reloadConfig();
-            this.bot.boot();
+            this.durendal.shutDown();
+            this.durendal.reloadConfig();
+            this.durendal.boot();
         });
 
         this.on('start', () => {
             Logger.log("Booting up!");
-            this.bot.boot();
+            this.durendal.boot();
         });
 
         this.on('interface', () => {
@@ -31,7 +31,7 @@ class Bootstrap extends EventEmitter {
         this.on('stop', () => {
             Logger.log("Disconnecting from Discord...");
             Interface.stop();
-            this.bot.shutDown();
+            this.durendal.shutDown();
         });
     }
 }

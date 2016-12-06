@@ -25,6 +25,11 @@ class Configuration {
                 'type'          : 'string',
                 'default'       : 'auth.json'
             },
+            'restrict_commands' : {
+                'description'   : 'Whether restricted commands require permissions before they can be run. Set this to false if you want all commands to be unrestricted',
+                'type'          : 'boolean',
+                'default'       : 'true'
+            },
             'allowed_channels' : {
                 'description'   : 'The channels that the bot is allowed to talk in (Ctrl+C to stop)',
                 'type'          : 'array'

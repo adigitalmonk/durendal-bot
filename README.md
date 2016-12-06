@@ -1,7 +1,7 @@
 # README
 ## Requirements
 * NodeJS `>= 7.0.0`
-* NPM `>=4.0.0` 
+* NPM `>=4.0.0`
 
 (This is just based on my set up, this should work with NodeJS `>=6.0.0`)
 
@@ -27,7 +27,7 @@ The config file has multiple settings, including but not limited to:
 - Command prefix
 
 You'll need to get the Bot's secret key from the Application/Bot's page on
-[the Discord Developer portal](http://discordapp.com/developers/applications/me/) 
+[the Discord Developer portal](http://discordapp.com/developers/applications/me/)
 
 There is a also a handy entry point to build an initial configuration file.
 ```
@@ -49,11 +49,27 @@ But you're going to want to update the client ID to be the ID of your bot (which
 ### Run It!
 Once you are ready, do this:
 ```
-> node main 
+> node main
 ```
 And hopefully nothing breaks.
 
+### Permissions and Restricting Commands
+Some of the bots commands are restricted. Restricted commands must be granted to at least one of your server roles before they can be run. Once granted to a role, anyone with that role may issue the command. Alternatively, if you do not wish to restrict any commands you can set the `restrict_commands` configuration option to false.
+
+Users that have the _Administrator_ server permission have full authority to grant or revoke any bot command permissions. Otherwise, users must have the _Manage Roles_ server permission. Similar to the Discord role structure, they can only alter roles lower than their highest. They cannot grant permission to use a command that they are not allowed to run themselves.
+
+The `grantPermission`, `revokePermission`, and `showPermissions` commands can be used to affect restricted commands.
+
+Example: Granting the `Shutdown` command to the server role _Moderator_
+`grantPermission Shutdown Moderator`
+
+Example: Revoking the `Foo` command from the server role _Bar_
+`revokePermission Foo Bar`
+
+Example: Show what roles can run the command `Qaz`
+`showPermissions Qaz`
+
 ---
 ## Links
-- [Discord Developer Portal](http://discordapp.com/developers/applications/me/) 
+- [Discord Developer Portal](http://discordapp.com/developers/applications/me/)
 - [Discord Bot Connection](https://discordapp.com/oauth2/authorize?client_id=XXXXXXX&scope=bot)
