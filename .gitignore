@@ -4,4 +4,5 @@ conf/auth.json
 
 # Legacy
 config.js
+!src/commands/config.js
 auth.json
