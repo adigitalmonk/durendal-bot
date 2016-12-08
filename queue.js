@@ -4,8 +4,8 @@ class Queue {
     }
 
     cancel(queue_id) {
-        let id = this.tasks[queue_id];
-        return clearTimeout(id);
+        let instance = this.tasks[queue_id];
+        return clearTimeout(instance);
     }
 
     add(callback, timeout) {
