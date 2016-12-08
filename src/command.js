@@ -1,5 +1,6 @@
 const auditor = require('./auditor.js');
 const permissions = require('./permissions.js');
+const Logger = require('./logger.js');
 
 class Command {
     constructor(msg) {
@@ -60,7 +61,8 @@ class Command {
             return true;
         }
         // Since we are restricted, we need to check if the issuer has permission to run the command
-        return permissions.isAllowedToRun(this.commandName, this.authorRoles, this.guildUsedIn);
+        // if we don't have a particular guild, check all known
+        return this.guildUsedIn ? permissions.isAllowedToRun(this.commandName, this.authorRoles, this.guildUsedIn):permissions.isAllowedToRunSomewhere(this.author.id, this.commandName);
     }
 
     report() {
