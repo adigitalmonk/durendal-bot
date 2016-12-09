@@ -17,12 +17,15 @@ class Interface {
         this.in.setPrompt(prefix, prefix.length);
 
         this.in.on(
-            'line', 
-            function(cmd) {
+            'line',
+            function(input) {
                 let repeat = true;
+                input = input.split(" ");
+                let cmd = input.shift();
+                let args = input;
                 if (cmd !== 'stop' && cmd !== 'start' && this[cmd]) {
                     // TODO: Implement a better way to map this
-                    repeat = this[cmd]();
+                    repeat = this[cmd](args);
                 }
                 if (repeat) {
                     this.in.prompt();
