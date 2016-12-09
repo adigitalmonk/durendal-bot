@@ -1,4 +1,7 @@
 const readline = require('readline');
+const join = require('path').join;
+const Logger = require('./logger.js');
+const configuration = require('./configuration.js');
 
 class Interface {
 
@@ -43,10 +46,79 @@ class Interface {
 
     }
 
+    config(args){
+        let optionName = '';
+        let optionValue = undefined;
+        if (args.length>0){
+            optionName = args[0];
+        } else {
+
+            Logger.log('To look up option `foo`: config foo\n'+
+            '*To change the value of foo to bar: config foo bar\n'+
+            '*Note: it depends on what the option is expecting. strings, integers, booleans should appear as the second argument. Arrays should have each element as its own argument.\n'+
+            '\n Here is a list of config options you can use: '+configuration.getConfigurableOptionNames());
+            return true;
+        }
+        // Confirm that we were given a valid option
+        if(!configuration.isValidOptionName(optionName)){
+            Logger.log('"'+optionName+'" was not a valid option name. Try one of '+configuration.getConfigurableOptionNames());
+            return true;
+        }
+        if(args.length===1){
+            Logger.log(configuration.getOptionInfoString(optionName));
+            return true;
+        }
+        let optionType = configuration.getOptionType(optionName);
+        if(optionType===undefined){
+            // We must know what type we are expecting or we cannot validate
+            Logger.log('Error, type information missing for '+optionName+' in the schema. I cannot determine if your new value is valid for this option.');
+            return true;
+        }
+
+        // We must have a valid option name, at least one argument, and know the type of input to expect at this point
+        // We want to look at the remaining args, protect the original args and get rid of the first which is the option name
+        let values = args;
+        values.shift();
+        let valueToSet = undefined; // Will hold what we eventually try setting
+
+        if(optionType!=='array'){
+            if(values.length>1){
+                // We were given multiple values for a non array option, invalid
+                Logger.log('Error, I was not expecting more than one value. This option is expecting "'+optionType+'" not an array');
+                return true;
+            }
+            valueToSet = configuration.validateOption(optionType,values[0]);
+        } else {
+            // Make an "array" out of the remaining args. JSON style
+            valueToSet = configuration.validateOption(optionType,'['+values.join()+']');
+        }
+
+        if(valueToSet){
+            // The value must have passed validation, lets set it
+            let message = optionName+'\nWas: '+configuration.getSetting(optionName);
+            configuration.setSetting(optionName, valueToSet);
+            configuration.save();
+            message += '\nNow: '+configuration.getSetting(optionName);
+            Logger.log(message);
+        } else {
+            // Value must not have passed validation, don't set
+            Logger.log('Error, I was not able to validate your setting. This option is expecting "'+optionType+'"');
+        }
+        return true;
+    }
+
     help() {
         console.log(`
 
 [Available Commands]
+'config'
+    description:
+        View and modify the bots configuration options.
+    params:
+        See usage
+    usage:
+        call with no params to view usage
+
 'help'
     description:
         This message.
