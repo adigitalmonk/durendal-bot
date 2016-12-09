@@ -37,6 +37,11 @@ class Configuration {
         }
     }
 
+    // Filters out options we cannot modify with this command and returns a string of possible options
+    getConfigurableOptionNames(protectedValues=[]){
+        return this.options().filter(o=>!protectedValues.includes(o)).join(", ");
+    }
+
     getSchema(option) {
         return this.optionSchema[option];
     }
@@ -53,9 +58,45 @@ class Configuration {
         return this.data.get(option);
     }
 
+    // Returns a string of what we know about the given option
+    getOptionInfoString(optionName){
+        if(!this.isValidOptionName(optionName)){
+            return '';
+        }
+        let optionSchema = this.getSchema(optionName);
+        let result = optionName + ' = '+this.getSetting(optionName);
+        result +='\n\tDescription: ';
+        result += optionSchema.description || 'no description';
+        result +='\n\tType: ';
+        result += optionSchema.type || 'no type';
+        result +='\n\tDefault: ';
+        result += optionSchema.default || 'no default';
+        return result;
+    }
+
+    // Looks at the schema to find the expected type for the option
+    getOptionType(optionName){
+        if(!this.isValidOptionName(optionName)){
+            return undefined;
+        }
+        return this.getSchema(optionName).type || undefined;
+    }
+
     setSetting(option, value) {
+        if(!this.isValidOptionName(option)){
+            return false;
+        }
+        value = this.validateOption(value);
+        if(value===undefined){
+            return false;
+        }
         this.data.set(option, value);
         return true;
+    }
+
+    // True of the option name given matches one of the known options
+    isValidOptionName(optionName){
+        return this.options().find(o => { return o===optionName; }) ? true:false;
     }
 
     load(bypass) {
@@ -133,6 +174,26 @@ class Configuration {
     reload() {
         this.uncache();
         return this.load();
+    }
+
+    // Attempts to validate the user input by comparing what we were expecting to what we got
+    validateOption(expectedType, givenValue){
+        switch(expectedType){
+            case 'array':
+                return givenValue.startsWith('[') && givenValue.endsWith(']') ? givenValue:undefined;
+                break; // Yes, I know this is unreachable but it lets me sleep at night. Ok?
+            case 'string':
+                return givenValue;
+                break;
+            case 'boolean':
+                return givenValue.toLowerCase()==='true' || givenValue.toLowerCase()==='false' ? givenValue:undefined;
+                break;
+            case 'integer':
+                return isNaN(parseInt(givenValue)) ? undefined:givenValue;
+                break;
+            default:
+                return undefined;
+        }
     }
 }
 
