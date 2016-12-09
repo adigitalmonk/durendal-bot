@@ -10,7 +10,7 @@ class Interface {
     }
 
     start() {
-        console.log("Bringing up the user interface...");
+        Logger.log("Bringing up the user interface...");
         this.in = readline.createInterface({
             input: process.stdin,
             output: process.stdout
@@ -36,7 +36,7 @@ class Interface {
             }.bind(this)
         ).on(
             'close',
-            () => console.log('Closing user interface')
+            () => Logger.log('Closing user interface')
         );
         this.in.prompt();
     }
@@ -108,7 +108,7 @@ class Interface {
     }
 
     help() {
-        console.log(`
+        Logger.log(`
 
 [Available Commands]
 'config'
