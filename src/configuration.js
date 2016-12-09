@@ -86,7 +86,7 @@ class Configuration {
         if(!this.isValidOptionName(option)){
             return false;
         }
-        value = this.validateOption(value);
+        value = this.validateOption(this.getOptionType(option),value);
         if(value===undefined){
             return false;
         }
