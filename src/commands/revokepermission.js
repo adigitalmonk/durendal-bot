@@ -1,7 +1,4 @@
-const join = require('path').join;
-const Command = require(join('..','command.js'));
-const permissions = require(join('..','permissions.js'));
-const Logger = require(join('..','logger.js'));
+const Command = grab('src/command.js');
 
 class revokePermission extends Command {
     constructor(msg) {
@@ -34,7 +31,7 @@ class revokePermission extends Command {
                 commandToRevoke = this.args[0];
                 roleToRevoke = this.args[1];
                 guildNameToRevoke = this.args[3];
-                guildIdToRevoke = permissions.guildNameToId(guildNameToRevoke);
+                guildIdToRevoke = Permissions.guildNameToId(guildNameToRevoke);
                 if(!guildIdToRevoke){
                     message = 'I couldn\'t find guild "'+guildNameToRevoke+'"';
                     Logger.message(this.author, message);
@@ -50,9 +47,9 @@ class revokePermission extends Command {
             return;
         }
         // Attempt to translate the role Name to Id
-        roleIdToRevoke = permissions.roleNameToId(guildIdToRevoke,roleToRevoke);
+        roleIdToRevoke = Permissions.roleNameToId(guildIdToRevoke,roleToRevoke);
         if(roleIdToRevoke){
-            message = permissions.removeCommandFromRole(guildIdToRevoke,commandToRevoke,roleIdToRevoke,this.author.id);
+            message = Permissions.removeCommandFromRole(guildIdToRevoke,commandToRevoke,roleIdToRevoke,this.author.id);
         } else {
             message = 'I couldn\'t find role "'+roleToRevoke+'" in guild '+guildNameToRevoke;
         }

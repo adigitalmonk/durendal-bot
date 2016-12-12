@@ -1,7 +1,7 @@
-const Durendal = require('./durendal.js');
 const EventEmitter = require('events').EventEmitter;
-const Logger = require('./logger.js');
-const Interface = require('./interface.js');
+
+const Durendal = grab('src/durendal.js');
+const Interface = grab('src/interface.js');
 
 class Bootstrap extends EventEmitter {
 

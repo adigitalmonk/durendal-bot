@@ -17,7 +17,7 @@ class Interface {
         this.in.setPrompt(prefix, prefix.length);
 
         this.in.on(
-            'line', 
+            'line',
             function(cmd) {
                 let repeat = true;
                 if (cmd !== 'stop' && cmd !== 'start' && this[cmd]) {
@@ -65,7 +65,7 @@ class Interface {
     }
 
     shutdown() {
-        require('./bootstrap').emit('stop');
+        grab('src/bootstrap').emit('stop');
         this.stop();
         return false;
     }

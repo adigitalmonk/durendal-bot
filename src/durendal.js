@@ -1,13 +1,9 @@
 const Discord = require("discord.js");
-const Interface = require('./interface.js');
 const fs = require('fs');
 const join = require('path').join;
-const Logger = require('./logger.js');
 
-// We pre-load this in the main function,
-// so we just need to get it here
-const config = require("./configuration.js");
-const auditor = require('./auditor.js');
+const Interface = grab('src/interface.js');
+const auditor = grab('src/auditor.js');
 
 class Durendal {
     constructor() {
@@ -19,7 +15,7 @@ class Durendal {
     }
 
     reloadConfig() {
-        config.reload();
+        Settings.reload();
     }
 
     // Get all of the listeners we have set up
@@ -66,7 +62,7 @@ class Durendal {
             });
         }
 
-        let secret_key = config.getSetting('secret_key');
+        let secret_key = Settings.getSetting('secret_key');
 
         bot.login(secret_key)
             .then(

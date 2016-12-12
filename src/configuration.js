@@ -1,7 +1,9 @@
+const fs = require('fs');
 const path = require('path');
+
 const config_root = path.join(__dirname,'..','conf');
 const config_file = path.join(config_root, 'config.json');
-const fs = require('fs');
+
 
 class Configuration {
 

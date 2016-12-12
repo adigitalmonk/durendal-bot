@@ -1,5 +1,3 @@
-const join = require('path').join;
-const Logger = require(join('..','logger.js'));
 module.exports = [
     {
         event: 'ready',
