@@ -89,10 +89,13 @@ class Permissions extends EventEmitter {
         // Look in all of the bots guilds for the Author Id so we can obtain their GuildMember
         // object which allows us to get their roles. With their roles in each guild, determine
         // if any of them allow them to issue this command
-        return bootstrap.durendal.bot.guilds.filter(g=>g.members.find('id',authorId)).reduce((members,guild)=> {
+        return bootstrap.durendal.bot.guilds.filter(g=>g.members.find('id',authorId))
+        .reduce((members,guild)=> {
             members.push(guild.members.find('id',authorId));
             return members;
-            }, []).find(m=>this.isAllowedToRun(commandName, m.roles,m.guild)) ? true:false;
+            }, [])
+            .find(m=>this.isAllowedToRun(commandName, m.roles,m.guild))
+        ? true:false;
     }
 
     removeCommandFromRole(guildId, commandName, roleId, userId){
