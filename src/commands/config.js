@@ -87,11 +87,11 @@ class config extends Command {
     }
 
     usage () {
-        return this.commandName+' can only be used by direct messaging me. You can use it to look up a config setting or set a new value.\n'+
-        'To look up option `foo`: '+this.commandName+' foo\n'+
-        '*To change the value of foo to bar'+this.commandName+' foo bar\n'+
-        '*Note: it depends on what the option is expecting. strings, integers, booleans should appear as the second argument. Arrays should have each element as its own argument.\n'+
-        '\n Here is a list of config options you can use: '+configuration.getConfigurableOptionNames(protectedValues);
+        return `${this.commandName} can only be used by direct messaging me. You can use it to look up a config setting or set a new value.
+To look up option \`foo\`: ${this.commandName} foo
+*To change the value of foo to bar ${this.commandName} foo bar
+*Note: it depends on what the option is expecting. strings, integers, booleans should appear as the second argument. Arrays should have each element as its own argument.
+Here is a list of config options you can use: ${configuration.getConfigurableOptionNames(protectedValues)}`;
     }
 
 }

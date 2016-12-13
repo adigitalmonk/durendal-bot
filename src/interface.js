@@ -53,10 +53,10 @@ class Interface {
             optionName = args[0];
         } else {
 
-            Logger.log('To look up option `foo`: config foo\n'+
-            '*To change the value of foo to bar: config foo bar\n'+
-            '*Note: it depends on what the option is expecting. strings, integers, booleans should appear as the second argument. Arrays should have each element as its own argument.\n'+
-            '\n Here is a list of config options you can use: '+configuration.getConfigurableOptionNames());
+            Logger.log(`To look up option \`foo\`: config foo
+*To change the value of foo to bar: config foo bar
+*Note: it depends on what the option is expecting. strings, integers, booleans should appear as the second argument. Arrays should have each element as its own argument.
+Here is a list of config options you can use: ${configuration.getConfigurableOptionNames()}`);
             return true;
         }
         // Confirm that we were given a valid option
