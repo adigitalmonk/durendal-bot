@@ -1,7 +1,4 @@
-const join = require('path').join;
-const Command = require(join('..','command.js'));
-const permissions = require(join('..','permissions.js'));
-const Logger = require(join('..','logger.js'));
+const Command = grab('src/command.js');
 
 class grantPermission extends Command {
     constructor(msg) {
@@ -34,7 +31,7 @@ class grantPermission extends Command {
                 commandToGrant = this.args[0];
                 roleToGrant = this.args[1];
                 guildNameToGrant = this.args[3];
-                guildIdToGrant = permissions.guildNameToId(guildNameToGrant);
+                guildIdToGrant = Permissions.guildNameToId(guildNameToGrant);
                 if (!guildIdToGrant) {
                     message = 'I couldn\'t find guild "' + guildNameToGrant + '"';
                     Logger.message(this.author, message);
@@ -50,10 +47,10 @@ class grantPermission extends Command {
             return;
         }
         // Attempt to translate the role Name to Id
-        roleIdToGrant = permissions.roleNameToId(guildIdToGrant, roleToGrant);
+        roleIdToGrant = Permissions.roleNameToId(guildIdToGrant, roleToGrant);
         if (roleIdToGrant) {
             // We have all the info we need, lets attempt to add it
-            message = permissions.addCommandToRole(guildIdToGrant,commandToGrant,roleIdToGrant,this.author.id);
+            message = Permissions.addCommandToRole(guildIdToGrant,commandToGrant,roleIdToGrant,this.author.id);
         } else {
             // Couldn't find the role id
             message = 'I couldn\'t find role "' + roleToGrant + '" in guild ' + guildNameToGrant;

@@ -1,5 +1,4 @@
-const join = require('path').join;
-const Command = require(join('..','command.js'));
+const Command = grab('src/command.js');
 
 class Shutdown extends Command {
     constructor(msg) {
@@ -8,7 +7,7 @@ class Shutdown extends Command {
     }
 
     logic() {
-        require(join('..','bootstrap.js')).emit('stop');
+        grab('src/bootstrap.js').emit('stop');
     }
 }
 

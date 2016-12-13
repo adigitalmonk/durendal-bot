@@ -1,6 +1,4 @@
-const join = require('path').join;
-const Command = require(join('..','command.js'));
-const Logger = require(join('..','logger.js'));
+const Command = grab('src/command.js');
 
 class Syn extends Command {
     constructor(msg) {

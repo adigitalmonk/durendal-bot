@@ -1,7 +1,4 @@
 const readline = require('readline');
-const join = require('path').join;
-const Logger = require('./logger.js');
-const configuration = require('./configuration.js');
 
 class Interface {
 
@@ -56,19 +53,19 @@ class Interface {
             Logger.log(`To look up option \`foo\`: config foo
 *To change the value of foo to bar: config foo bar
 *Note: it depends on what the option is expecting. strings, integers, booleans should appear as the second argument. Arrays should have each element as its own argument.
-Here is a list of config options you can use: ${configuration.getConfigurableOptionNames()}`);
+Here is a list of config options you can use: ${Settings.getConfigurableOptionNames()}`);
             return true;
         }
         // Confirm that we were given a valid option
-        if(!configuration.isValidOptionName(optionName)){
-            Logger.log('"'+optionName+'" was not a valid option name. Try one of '+configuration.getConfigurableOptionNames());
+        if(!Settings.isValidOptionName(optionName)){
+            Logger.log('"'+optionName+'" was not a valid option name. Try one of '+Settings.getConfigurableOptionNames());
             return true;
         }
         if(args.length===1){
-            Logger.log(configuration.getOptionInfoString(optionName));
+            Logger.log(Settings.getOptionInfoString(optionName));
             return true;
         }
-        let optionType = configuration.getOptionType(optionName);
+        let optionType = Settings.getOptionType(optionName);
         if(optionType===undefined){
             // We must know what type we are expecting or we cannot validate
             Logger.log('Error, type information missing for '+optionName+' in the schema. I cannot determine if your new value is valid for this option.');
@@ -87,18 +84,18 @@ Here is a list of config options you can use: ${configuration.getConfigurableOpt
                 Logger.log('Error, I was not expecting more than one value. This option is expecting "'+optionType+'" not an array');
                 return true;
             }
-            valueToSet = configuration.validateOption(optionType,values[0]);
+            valueToSet = Settings.validateOption(optionType,values[0]);
         } else {
             // Make an "array" out of the remaining args. JSON style
-            valueToSet = configuration.validateOption(optionType,'['+values.join()+']');
+            valueToSet = Settings.validateOption(optionType,'['+values.join()+']');
         }
 
         if(valueToSet){
             // The value must have passed validation, lets set it
-            let message = optionName+'\nWas: '+configuration.getSetting(optionName);
-            configuration.setSetting(optionName, valueToSet);
-            configuration.save();
-            message += '\nNow: '+configuration.getSetting(optionName);
+            let message = optionName+'\nWas: '+Settings.getSetting(optionName);
+            Settings.setSetting(optionName, valueToSet);
+            Settings.save();
+            message += '\nNow: '+Settings.getSetting(optionName);
             Logger.log(message);
         } else {
             // Value must not have passed validation, don't set
@@ -140,7 +137,7 @@ Here is a list of config options you can use: ${configuration.getConfigurableOpt
     }
 
     shutdown() {
-        require('./bootstrap').emit('stop');
+        grab('src/bootstrap').emit('stop');
         this.stop();
         return false;
     }

@@ -1,6 +1,4 @@
-const auditor = require('./auditor.js');
-const permissions = require('./permissions.js');
-const Logger = require('./logger.js');
+const auditor = grab('src/auditor.js');
 
 class Command {
     constructor(msg) {
@@ -18,7 +16,7 @@ class Command {
         // create data members
         this.author = msg.author;
         this.channel = msg.channel;
-        this.commandName = this.constructor.name;
+        this.commandName = this.constructor.name.toLowerCase();
         // Depending on the message you might not get a GuildMember object
         this.authorRoles =  msg.member ? msg.member.roles : undefined;
         this.args = this.prepareArgs(msg);
@@ -62,7 +60,7 @@ class Command {
         }
         // Since we are restricted, we need to check if the issuer has permission to run the command
         // if we don't have a particular guild, check all known
-        return this.guildUsedIn ? permissions.isAllowedToRun(this.commandName, this.authorRoles, this.guildUsedIn):permissions.isAllowedToRunSomewhere(this.author.id, this.commandName);
+        return this.guildUsedIn ? Permissions.isAllowedToRun(this.commandName, this.authorRoles, this.guildUsedIn):Permissions.isAllowedToRunSomewhere(this.author.id, this.commandName);
     }
 
     report() {

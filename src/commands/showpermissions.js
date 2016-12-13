@@ -1,8 +1,5 @@
-const join = require('path').join;
-const Command = require(join('..','command.js'));
-const permissions = require(join('..','permissions.js'));
-const bootstrap = require(join('..','bootstrap.js'));
-const Logger = require(join('..','logger.js'));
+const Command = grab('src/command.js');
+const bootstrap = grab('src/bootstrap.js');
 
 // Looks up the roles that can run the given command
 
@@ -13,8 +10,8 @@ class showPermissions extends Command {
     // Helper method to create the message string given the guildId,
     // commandName, and guildName.
     generateMessage(guildId, commandName, guildName){
-        let roles = permissions.getAllowedRoles(guildId,commandName);
-        let roleNames = roles.map(r => permissions.roleIdToName(guildId,r));
+        let roles = Permissions.getAllowedRoles(guildId,commandName);
+        let roleNames = roles.map(r => Permissions.roleIdToName(guildId,r));
         if(roles.length>0){
             return commandName+' is allowed for roles '+roleNames.join();
         } else {
@@ -38,7 +35,7 @@ class showPermissions extends Command {
             if (this.args[1]==='in'){
                 let guildName = this.args[2];
                 // Convert guild name to id
-                let guildId = permissions.guildNameToId(guildName);
+                let guildId = Permissions.guildNameToId(guildName);
                 if(guildId){
                     // Exactly one matching guild
                     message=this.generateMessage(guildId,this.args[0],guildName);

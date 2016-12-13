@@ -1,8 +1,4 @@
-const join = require('path').join;
-const Command = require(join('..','command.js'));
-const configuration = require(join('..','configuration.js'));
-const Logger = require(join('..','logger.js'));
-const permissions = require(join('..','permissions.js'));
+const Command = grab('src/command.js');
 const protectedValues = ['secret_key'];
 
 class config extends Command {
@@ -36,19 +32,19 @@ class config extends Command {
         }
 
         // Confirm that we were given a valid option
-        if(!configuration.isValidOptionName(optionName)){
-            Logger.message(this.author, '"'+optionName+'" was not a valid option name. Try one of '+configuration.getConfigurableOptionNames(protectedValues));
+        if(!Settings.isValidOptionName(optionName)){
+            Logger.message(this.author, '"'+optionName+'" was not a valid option name. Try one of '+Settings.getConfigurableOptionNames(protectedValues));
             return;
         }
 
         // Only given the option name, show its info
         if(this.args.length===1){
-            Logger.message(this.author, configuration.getOptionInfoString(optionName));
+            Logger.message(this.author, Settings.getOptionInfoString(optionName));
             return;
         }
 
         // Determine the expected type for this option
-        let optionType = configuration.getOptionType(optionName);
+        let optionType = Settings.getOptionType(optionName);
         if(optionType===undefined){
             // We must know what type we are expecting or we cannot validate
             Logger.message(this.author, 'Error, type information missing for '+optionName+' in the schema. I cannot determine if your new value is valid for this option.');
@@ -67,18 +63,18 @@ class config extends Command {
                 Logger.message(this.author, 'Error, I was not expecting more than one value. This option is expecting "'+optionType+'" not an array');
                 return;
             }
-            valueToSet = configuration.validateOption(optionType,values[0]);
+            valueToSet = Settings.validateOption(optionType,values[0]);
         } else {
             // Make an "array" out of the remaining args. JSON style
-            valueToSet = configuration.validateOption(optionType,'['+values.join()+']');
+            valueToSet = Settings.validateOption(optionType,'['+values.join()+']');
         }
 
         if(valueToSet){
             // The value must have passed validation, lets set it
-            let message = optionName+'\nWas: '+configuration.getSetting(optionName);
-            configuration.setSetting(optionName, valueToSet);
-            configuration.save();
-            message += '\nNow: '+configuration.getSetting(optionName);
+            let message = optionName+'\nWas: '+Settings.getSetting(optionName);
+            Settings.setSetting(optionName, valueToSet);
+            Settings.save();
+            message += '\nNow: '+Settings.getSetting(optionName);
             Logger.message(this.author,message);
         } else {
             // Value must not have passed validation, don't set
@@ -91,7 +87,7 @@ class config extends Command {
 To look up option \`foo\`: ${this.commandName} foo
 *To change the value of foo to bar ${this.commandName} foo bar
 *Note: it depends on what the option is expecting. strings, integers, booleans should appear as the second argument. Arrays should have each element as its own argument.
-Here is a list of config options you can use: ${configuration.getConfigurableOptionNames(protectedValues)}`;
+Here is a list of config options you can use: ${Settings.getConfigurableOptionNames(protectedValues)}`;
     }
 
 }

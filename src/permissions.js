@@ -1,10 +1,12 @@
-const config = require('./configuration.js');
 const fs = require('fs');
 const EventEmitter = require('events').EventEmitter;
 const path = require('path');
-const bootstrap = require('./bootstrap.js');
-const permissions_file = path.join(__dirname,'..','conf', config.getSetting('permissions_file'));
-const Logger = require('./logger.js');
+
+const bootstrap = grab('src/bootstrap.js');
+
+const permissions_file = path.join(__dirname, '..', 'conf', Settings.getSetting('permissions_file'));
+
+
 // We could probably do this without
 // using the EventEmitter parent
 // but it lets us do the events
@@ -71,7 +73,7 @@ class Permissions extends EventEmitter {
     // to run the provided command name. True if yes, false otherwise
     isAllowedToRun(commandName, runnersRoles, runnersGuild){
         // Decide if we need to check permissions or not based on config
-        if(config.getSetting('restrict_commands')===false){
+        if(Settings.getSetting('restrict_commands')===false){
             return true;
         }
         if(runnersGuild && runnersRoles){
@@ -178,7 +180,7 @@ class Permissions extends EventEmitter {
     constructor(options = {}) {
         super(); // Because we're extending
 
-        if (!config.getSetting('permissions_file')) {
+        if (!Settings.getSetting('permissions_file')) {
             throw new Error('Missing Permissions File setting');
         }
 
