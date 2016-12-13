@@ -83,13 +83,6 @@ class Configuration {
     }
 
     setSetting(option, value) {
-        if(!this.isValidOptionName(option)){
-            return false;
-        }
-        value = this.validateOption(this.getOptionType(option),value);
-        if(value===undefined){
-            return false;
-        }
         this.data.set(option, value);
         return true;
     }
