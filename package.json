@@ -5,6 +5,7 @@
   "main": "main.js",
   "dependencies": {
     "discord.js": "^10.0.1",
+    "node-dice-js": "^0.1.2",
     "node-opus": "^0.2.2",
     "prompt": "^1.0.0"
   },

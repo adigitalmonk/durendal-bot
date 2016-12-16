@@ -15,6 +15,9 @@ registerCommands({
         'src' : 'src/commands/revokepermission.js',
         'limit' : 20
     },
+    'roll' : {
+        'src' : 'src/commands/roll.js'
+    },
     'showpermissions' : {
         'src' : 'src/commands/showpermissions.js',
         'limit' : 20
