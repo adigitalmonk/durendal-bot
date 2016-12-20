@@ -41,6 +41,11 @@ class Command {
         return args;
     }
 
+    getAuthorGuildMember() {
+        const output = this.guildUsedIn.members.find(member => member.id === this.author.id);
+        return output;
+    }
+
     audit() {
 
         // Check permissions?

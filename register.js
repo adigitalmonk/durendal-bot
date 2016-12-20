@@ -3,6 +3,11 @@ registerCommand('syn', {
     'limit' : 20
 });
 
+registerCommand('role', {
+    'src' : 'src/commands/role.js',
+    'rate-limit' : 1
+});
+
 registerCommands({
     'shutdown' : {
         'src' : 'src/commands/shutdown.js'
