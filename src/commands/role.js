@@ -38,17 +38,18 @@ class Role extends Command {
 
         const guildMember = this.getAuthorGuildMember();
 
-        // TODO: Race condition here somehow?
         guildMember.removeRoles(this.coreRoles)
             .then(
                 updatedMember => {
-                    updatedMember.addRole(roleRequest)
-                        .then(
-                            finalMember => {
-                                const nickname = finalMember.nickname || finalMember.user.username;
-                                Logger.send(this.channel, `${nickname} is now a ${roleRequest.name}!`);
-                            }
-                        );
+                    setTimeout(function() {
+                        updatedMember.addRole(roleRequest)
+                            .then(
+                                finalMember => {
+                                    const nickname = finalMember.nickname || finalMember.user.username;
+                                    Logger.send(this.channel, `${nickname} is now a ${roleRequest.name}!`);
+                                }
+                            );
+                        }.bind(this), 500); // We wait .5 seconds here to avoid race condition with the Discord API 
                 },
                 e => {
                     const nickname = guildMember.nickname || guildMember.user.username;
