@@ -28,9 +28,9 @@ class Role extends Command {
     }
 
     logic() {
-        const roleArg = this.args.shift();
-
+        const roleArg = this.args.join(" ");
         const roleRequest = this.resolveRole(roleArg);
+
         if (!roleRequest) {
             // TODO: Usage?
             return;
