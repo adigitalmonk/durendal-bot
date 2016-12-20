@@ -1,29 +1,42 @@
 const Command = grab('src/command.js');
 
+const roleMatching = {
+    'Tank'      : 
+        'tank|drk|dark knight|darkknight|pld|paladin|war|warrior|baddps',
+    'Damage'    : 
+        'damage|dps|nin|ninja|mnk|monk|drg|dragoon|floortank|mch|machinist|brd|bard|blm|blackmage|black mage|smn|summoner',
+    'Healer'    : 
+        'heals|heal|healer|healing|whm|white mage|whitemage|sch|scholar|ast|astrologian|followmode'
+};
+
+const prettyNames = {
+    'Damage'    : 'damage dealer',
+    'Healer'    : 'pocket healer',
+    'Tank'      : 'meat shield'
+}
+
+
 class Role extends Command {
     constructor(msg) {
         super(msg);
         const roles = ['Tank', 'Damage', 'Healer'];
         this.coreRoles = this.guildUsedIn.roles.filter( role => roles.includes(role.name) );
-
-        this.roleMatching = {
-            'Tank'      : 
-                'tank|drk|dark knight|darkknight|pld|paladin|war|warrior|baddps',
-            'Damage'    : 
-                'damage|dps|nin|ninja|mnk|monk|drg|dragoon|floortank|mch|machinist|brd|bard|blm|blackmage|black mage|smn|summoner',
-            'Healer'    : 
-                'heals|heal|healer|healing|whm|white mage|whitemage|sch|scholar|ast|astrologian|followmode'
-        };
     }
 
-
+    /**
+     * For a given role name, get the role object for it
+     * 
+     * @param {string} roleName
+     * @returns {Role} Role object
+     * 
+     * @memberOf Role
+     */
     resolveRole(roleName) {
-        for (let roleIdx in this.roleMatching) {
-            if (this.roleMatching[roleIdx].split('|').includes(roleName.toLowerCase())) {
+        for (let roleIdx in roleMatching) {
+            if (roleMatching[roleIdx].split('|').includes(roleName.toLowerCase())) {
                 return this.guildUsedIn.roles.find(role => role.name === roleIdx);
             }
         }
-
         return;
     }
 
@@ -46,7 +59,8 @@ class Role extends Command {
                             .then(
                                 finalMember => {
                                     const nickname = finalMember.nickname || finalMember.user.username;
-                                    Logger.send(this.channel, `${nickname} is now a ${roleRequest.name}!`);
+                                    const pretty = prettyNames[roleRequest.name];
+                                    Logger.send(this.channel, `${nickname} is now a ${pretty}!`);
                                 }
                             );
                         }.bind(this), 500); // We wait .5 seconds here to avoid race condition with the Discord API 
