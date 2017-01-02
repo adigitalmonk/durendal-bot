@@ -1,6 +1,5 @@
 registerCommand('syn', {
-    'src' : 'src/commands/syn.js',
-    'limit' : 20
+    'src' : 'src/commands/syn.js'
 });
 
 registerCommands({
@@ -8,19 +7,16 @@ registerCommands({
         'src' : 'src/commands/shutdown.js'
     },
     'grantpermission' : {
-        'src' : 'src/commands/grantpermission.js',
-        'limit' : 20
+        'src' : 'src/commands/grantpermission.js'
     },
     'revokepermission' : {
-        'src' : 'src/commands/revokepermission.js',
-        'limit' : 20
+        'src' : 'src/commands/revokepermission.js'
     },
     'roll' : {
         'src' : 'src/commands/roll.js'
     },
     'showpermissions' : {
-        'src' : 'src/commands/showpermissions.js',
-        'limit' : 20
+        'src' : 'src/commands/showpermissions.js'
     }
 });
 

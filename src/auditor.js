@@ -1,45 +1,84 @@
+// This is the maximum number of "minutes" we want to store in the audit history
 const audit_backlog = 10;
-const threshold = 3;
 
+/**
+ * Auditor used when handling the throttling of user calls to commands
+ * 
+ * @class Auditor
+ */
 class Auditor {
+    /**
+     * Creates an instance of Auditor.
+     * 
+     * @memberOf Auditor
+     */
     constructor() {
         this.data = {};
     }
 
-    observe(user, command) {
-        let date = new Date();
-        let timestamp = date.getHours() + "" + date.getMinutes();
+    /**
+     * Generate a unique key based on the current timestamp, the user ID, and command name
+     * 
+     * @param {string} userId A given user's ID (but realistically could be any string)
+     * @param {string} commandName A given command name (but realistically could be any string)
+     * @returns {object} Object containing the current timestamp and a unique key generated based on the user's ID and command name
+     * 
+     * @memberOf Auditor
+     */
+    getKey(userId, commandName) {
+        const date = new Date();
+        const timestamp = date.getHours() + "" + date.getMinutes();
+        return {
+            'timestamp' : timestamp, 
+            'key' : userId + '|' + commandName
+        };
+    }
 
+    /**
+     * Record that a user used a command
+     * 
+     * @param {string} userId The user who performed the command
+     * @param {string} commandName The command that the user performed
+     * @returns {boolean} Success state
+     * 
+     * @memberOf Auditor
+     */
+    track(userId, commandName) {
         if (this.data.length > audit_backlog) {
             this.data.pop();
         }
 
-        if (!this.data[timestamp]) {
-            this.data[timestamp] = {};
-        }
+        const {timestamp, key} = this.getKey(userId, commandName);
+        this.data[timestamp] = this.data[timestamp] || [];
 
-        if (!this.data[timestamp][user]) {
-            this.data[timestamp][user] = {};
-        }
+        // If this.data[key] is undefined set it to 1
+        // Otherwise increment it
+        this.data[timestamp][key] = this.data[timestamp][key] + 1 || 1;
 
-        if (!this.data[timestamp][user][command]) {
-            this.data[timestamp][user][command] = 1;
-            return true;
-        }
-
-        if (this.data[timestamp][user][command] >= threshold) {
-            return false;
-        }
-
-        this.data[timestamp][user][command] += 1;
+        // We successfully tracked
         return true;
     }
 
-    report(user) {
-        let date = new Date();
-        let timestamp = date.getHours() + "" + date.getMinutes();
-        return this.data[timestamp][user];
+    /**
+     * Check if this user has exceeded the threshold
+     * 
+     * @param {string} userId The user ID to check the audit for
+     * @param {string} commandName The command that the user is executed
+     * @returns {boolean} Whether or not the user is allowed to execute a command
+     * 
+     * @memberOf Auditor
+     */
+    permitted(userId, commandName) {
+        const {timestamp, key} = this.getKey(userId, commandName);
+        if (!this.data[timestamp]) {
+            return true;
+        }
+        const occurrences = this.data[timestamp][key] || 0;
+        const threshold = getCommand(commandName).rate_limit || 0; // should never be 0
+        return occurrences <= threshold;
     }
 }
 
+// Return as a singleton for now.
+// Probably should eventually not do this as a singleton
 module.exports = new Auditor();

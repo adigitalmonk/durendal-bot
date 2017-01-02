@@ -1,4 +1,4 @@
-const auditor = grab('src/auditor.js');
+const Audit = grab('src/auditor.js');
 
 class Command {
     constructor(msg) {
@@ -46,8 +46,8 @@ class Command {
         // Check permissions?
         let allowed = this.checkPermissions();
 
-        // Check audit?
-        let audit = auditor.observe(this.author, this.commandName);
+        // Check audit
+        let audit = Audit.permitted(this.author.id, this.commandName.toLowerCase());
 
         return audit && allowed;
     }
@@ -58,16 +58,18 @@ class Command {
             // If we aren't restricted it is allowed
             return true;
         }
+
         // Since we are restricted, we need to check if the issuer has permission to run the command
         return Permissions.isAllowedToRun(this.commandName, this.authorRoles, this.guildUsedIn);
     }
 
     report() {
-        return auditor;
+        return Audit;
     }
 
     execute() {
         if (!this.audit()) {
+            // TODO: Do we care if a user tried to use a command that they aren't allowed to use?
             return false;
         }
 
